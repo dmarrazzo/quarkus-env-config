@@ -1,0 +1,21 @@
+<html>
+
+<script>
+    async function getEnv() {
+        const response = await fetch('/env');
+        const myJson = await response.json(); //extract JSON from the http response
+        console.log(myJson);
+        return myJson;
+    }
+
+    async function main() {
+        const div = document.getElementById("env");
+        div.innerHTML = "env: " + JSON.stringify( await getEnv() );
+    }
+</script>
+
+<body onload="main()">
+    <pre id="env"></pre>
+</body>
+
+</html>
