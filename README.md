@@ -57,6 +57,61 @@ Learn more about configuration at https://quarkus.io/guides/config-reference
 
 8. Reload the page [https://localhost:9080/]() and check that page shows the actual value: `example.com`
 
+## OpenShift deployment
+
+It's possible to drive the OpenShift deployment through maven command line.
+This approach is particularly convenient for developers working on their sandbox environment (AKA Inner Loop).
+
+Deploy the application:
+
+1. Login in your OpenShift environment:
+
+   ```sh
+   oc login -u <username> -p <password> <openshift-api-url>
+   ```
+
+2. Create a new project: 
+
+   ```sh
+   oc new-project config
+   ```
+
+   **NOTE:** If you use a different project name update this property accordingly: `quarkus.container-image.group`
+
+3. Create a config map to store your environment variables:
+
+   ```sh
+   oc create configmap my-config --from-literal=EXAMPLE_HOST=example.com
+   ```
+
+4. Create a secret to store your environment variables in an opaque manner:
+
+   ```sh
+   oc create secret generic my-secret --from-literal=EXAMPLE_PASSWORD=dev-password
+   ```
+
+5. Launch image build and deployment
+
+   ```sh
+   ./mvnw install -Dquarkus.kubernetes.deploy=true
+   ```
+
+6. Retrive the application endpoint: 
+
+   ```sh
+   oc get route
+   ```
+
+Optionally delete the deployment:
+
+```sh
+oc delete all -l app.kubernetes.io/name=quarkus-env-config
+```
+
+See more:
+- https://developers.redhat.com/articles/2022/12/12/kubernetes-native-inner-loop-development-quarkus
+- https://quarkus.io/guides/deploying-to-openshift
+
 # Quarkus Basics
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.

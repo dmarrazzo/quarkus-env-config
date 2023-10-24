@@ -17,4 +17,7 @@ public interface Config {
 
     @JsonProperty("endpointURL")
     String endpointURL();
+
+    @JsonProperty("password")
+    String password();
 }
