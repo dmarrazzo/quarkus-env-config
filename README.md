@@ -1,6 +1,6 @@
-# Quarkus envirnoment config example
+# Quarkus environment config example
 
-> **IMPORTANT**: To start a new project using the supported Red Hat build of Quarkus go to: https://code.quarkus.redhat.com/
+**IMPORTANT**: To start a new project using the supported Red Hat build of Quarkus go to: https://code.quarkus.redhat.com/
 
 The **goal** of this project is to show **how to configure** the project via _environment variables_ and how to retrieve those variables via **javascript**.
 
@@ -43,7 +43,7 @@ Learn more about configuration at https://quarkus.io/guides/config-reference
 
 4. See the configuration values in browser: [https://localhost:9080/]()
 
-5. Stop java execution (CTRL-C)
+5. Stop Java execution (CTRL-C)
 
 6. Set the environment variable
 
