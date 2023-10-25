@@ -10,11 +10,12 @@
 
     async function main() {
         const div = document.getElementById("env");
-        div.innerHTML = "env: " + JSON.stringify( await getEnv() );
+        div.innerHTML = JSON.stringify( await getEnv() );
     }
 </script>
 
 <body onload="main()">
+    <h1>Configuration properties</h1>
     <pre id="env"></pre>
 </body>
 
