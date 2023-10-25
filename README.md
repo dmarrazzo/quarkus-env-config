@@ -41,7 +41,7 @@ Learn more about configuration at https://quarkus.io/guides/config-reference
 
 3. Run the project: `java -jar target/quarkus-app/quarkus-run.jar`
 
-4. See the configuration values in browser: [https://localhost:9080/]()
+4. See the configuration values in browser: [https://localhost:8080/]()
 
 5. Stop Java execution (CTRL-C)
 
@@ -55,7 +55,7 @@ Learn more about configuration at https://quarkus.io/guides/config-reference
 
 7. Run again: `java -jar target/quarkus-app/quarkus-run.jar`
 
-8. Reload the page [https://localhost:9080/]() and check that page shows the actual value: `example.com`
+8. Reload the page [https://localhost:8080/]() and check that page shows the actual value: `example.com`
 
 ## OpenShift deployment
 
