@@ -76,8 +76,6 @@ Deploy the application:
    oc new-project config
    ```
 
-   **NOTE:** If you use a different project name update this property accordingly: `quarkus.container-image.group`
-
 3. Create a config map to store your environment variables:
 
    ```sh
