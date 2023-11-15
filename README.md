@@ -62,7 +62,8 @@ Learn more about configuration at https://quarkus.io/guides/config-reference
 ### Developer Driven Deployment (Inner Loop)
 
 It's possible to drive the OpenShift deployment through maven command line.
-This approach is particularly convenient for developers working on their sandbox environment (AKA Inner Loop).
+This approach is particularly convenient for developers working on their sandbox environment, as known as Inner Loop.
+The **inner loop** refers to the process of building, testing, and deploying code changes to a staging or testing environment. 
 
 Deploy the application:
 
@@ -112,9 +113,9 @@ See more:
 - https://developers.redhat.com/articles/2022/12/12/kubernetes-native-inner-loop-development-quarkus
 - https://quarkus.io/guides/deploying-to-openshift
 
-### OpenShift Pipeline
+### OpenShift Pipeline (Outer loop)
 
-OpenShift Pipelines is a cloud-native continuous integration and continuous delivery (CI/CD) solution based on the open-source Tekton project. It is designed to automate the process of building, testing, and deploying applications to OpenShift clusters.
+OpenShift Pipelines is a cloud-native continuous integration and continuous delivery (CI/CD) solution based on the open-source Tekton project. It is designed to automate the process of building, testing, and deploying applications to OpenShift clusters (AKA **outer loop**).
 
 **Key Features of OpenShift Pipelines:**
 
@@ -177,7 +178,7 @@ spec:
 
 * `spec`: The specification for the pipeline, including the list of tasks.
 
-* `workspace` is a persistent storage location that can be shared between tasks in a pipeline. Workspaces are useful for storing data that needs to be accessed by multiple tasks, such as source code, build artifacts, or test results.
+* `workspaces`: is a persistent storage location that can be shared between tasks in a pipeline. Workspaces are useful for storing data that needs to be accessed by multiple tasks, such as source code, build artifacts, or test results.
 
 * `tasks`: The list of tasks to be executed in the pipeline. Each task is defined by a `name` and a `taskRef`, which specifies the task to be executed.
 
