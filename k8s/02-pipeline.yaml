@@ -1,0 +1,148 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: quarkus-config-pipeline
+  namespace: dmarrazz-dev
+spec:
+  params:
+    - default: 'https://github.com/dmarrazzo/quarkus-env-config.git'
+      description: url of the git repo for the code of deployment
+      name: git-url
+      type: string
+    - default: >-
+        image-registry.openshift-image-registry.svc:5000/dmarrazz-dev/quarkus-env-config
+      description: image to be built from the code
+      name: IMAGE
+      type: string
+  workspaces:
+    - name: maven-settings
+    - name: source-workspace
+  tasks:
+    - name: git-clone
+      workspaces:
+        - name: output
+          workspace: source-workspace
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: revision
+          value: ''
+        - name: refspec
+          value: ''
+        - name: submodules
+          value: 'true'
+        - name: depth
+          value: '1'
+        - name: sslVerify
+          value: 'true'
+        - name: crtFileName
+          value: ca-bundle.crt
+        - name: subdirectory
+          value: ''
+        - name: sparseCheckoutDirectories
+          value: ''
+        - name: deleteExisting
+          value: 'true'
+        - name: httpProxy
+          value: ''
+        - name: httpsProxy
+          value: ''
+        - name: noProxy
+          value: ''
+        - name: verbose
+          value: 'true'
+        - name: gitInitImage
+          value: >-
+            registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:c4b2183f7c7997bd401d86b33eefb637b3ef2fa90618e875106292cd69a15c14
+        - name: userHome
+          value: /home/git
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+    - name: maven
+      workspaces:
+        - name: source
+          workspace: source-workspace
+        - name: maven-settings
+          workspace: maven-settings
+      params:
+        - name: MAVEN_IMAGE
+          value: >-
+            registry.redhat.io/ubi8/openjdk-17@sha256:af305e087061cbaa4107ce0b304a1ef987f6b54bae3f75bfd529cfd084cba9b5
+        - name: GOALS
+          value:
+            - package
+            - -Dmaven.repo.local=$(workspaces.maven-settings.path)
+        - name: MAVEN_MIRROR_URL
+          value: ''
+        - name: SERVER_USER
+          value: ''
+        - name: SERVER_PASSWORD
+          value: ''
+        - name: PROXY_USER
+          value: ''
+        - name: PROXY_PASSWORD
+          value: ''
+        - name: PROXY_PORT
+          value: ''
+        - name: PROXY_HOST
+          value: ''
+        - name: PROXY_NON_PROXY_HOSTS
+          value: ''
+        - name: PROXY_PROTOCOL
+          value: http
+        - name: CONTEXT_DIR
+          value: .
+      runAfter:
+        - git-clone
+      taskRef:
+        kind: ClusterTask
+        name: maven
+    - name: buildah
+      workspaces:
+        - name: source
+          workspace: source-workspace
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE)
+        - name: BUILDER_IMAGE
+          value: >-
+            registry.redhat.io/rhel8/buildah@sha256:55f5c7d88c77e1ab5a2ab8e877172b2b66cb196e21f10dc45148470d0ee8bbae
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: DOCKERFILE
+          value: src/main/docker/Dockerfile.jvm
+        - name: CONTEXT
+          value: .
+        - name: TLSVERIFY
+          value: 'false'
+        - name: FORMAT
+          value: oci
+        - name: BUILD_EXTRA_ARGS
+          value: ''
+        - name: PUSH_EXTRA_ARGS
+          value: ''
+        - name: SKIP_PUSH
+          value: 'false'
+      runAfter:
+        - maven
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+    - name: apply-manifests
+      workspaces:
+        - name: manifest-dir
+          workspace: source-workspace
+        - name: kubeconfig-dir
+          workspace: source-workspace
+      params:
+        - name: SCRIPT
+          value: oc apply -f target/kubernetes/openshift.yml
+        - name: VERSION
+          value: latest
+      runAfter:
+        - buildah
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+  finally: []

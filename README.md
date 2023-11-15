@@ -29,7 +29,7 @@ Finally, you can retrieve the information via javascript: [index.html](src/main/
 
 Learn more about configuration at https://quarkus.io/guides/config-reference
 
-## How to run the demo
+## How to run the demo locally
 
 1. Clone this project
 
@@ -58,6 +58,8 @@ Learn more about configuration at https://quarkus.io/guides/config-reference
 8. Reload the page [https://localhost:8080/]() and check that page shows the actual value: `example.com`
 
 ## OpenShift deployment
+
+### Developer Driven Deployment (Inner Loop)
 
 It's possible to drive the OpenShift deployment through maven command line.
 This approach is particularly convenient for developers working on their sandbox environment (AKA Inner Loop).
@@ -109,6 +111,113 @@ oc delete all -l app.kubernetes.io/name=quarkus-env-config
 See more:
 - https://developers.redhat.com/articles/2022/12/12/kubernetes-native-inner-loop-development-quarkus
 - https://quarkus.io/guides/deploying-to-openshift
+
+### OpenShift Pipeline
+
+OpenShift Pipelines is a cloud-native continuous integration and continuous delivery (CI/CD) solution based on the open-source Tekton project. It is designed to automate the process of building, testing, and deploying applications to OpenShift clusters.
+
+**Key Features of OpenShift Pipelines:**
+
+* **Cloud-native:** Built on Kubernetes and Tekton, OpenShift Pipelines leverages the scalability, portability, and flexibility of cloud-native technologies.
+
+* **Declarative:** Pipelines are defined using YAML files, allowing for easy version control and collaboration.
+
+* **Reusable:** Tasks, the building blocks of pipelines, are reusable across different pipelines, promoting efficiency and consistency.
+
+* **Event-driven:** Pipelines can be triggered by various events, such as code changes, scheduled executions, or manual triggers.
+
+* **Integration with OpenShift:** Seamlessly integrates with OpenShift, enabling easy deployment and management of applications.
+
+**Benefits of Using OpenShift Pipelines:**
+
+* **Increased development velocity:** Automate the CI/CD process to deliver software faster and more reliably.
+
+* **Improved quality:** Automate testing to ensure code quality and prevent regressions.
+
+* **Reduced errors:** Automate deployments to minimize human errors and ensure consistent deployments.
+
+* **Enhanced collaboration:** Facilitate collaboration among developers and operations teams through shared pipelines and tasks.
+
+* **Simplified management:** Centralized management of CI/CD workflows within the OpenShift environment.
+
+**Pipeline**
+
+A Pipeline is a series of tasks to be executed in a specific order.
+The pipeline YAML file has the following structure:
+
+```yaml
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: <pipeline-name>
+spec:
+  workspaces:
+    - name: maven-settings
+    - name: source-workspace
+  tasks:
+    - name: <task-name-1>
+      taskRef:
+        kind: Task
+        name: <task-name-1>
+        params:
+         - name: <param-name>
+           value: <param-value>
+    - name: <task-name-2>
+      taskRef:
+        kind: Task
+        name: <task-name-2>
+    ... # Additional tasks
+```
+
+* `apiVersion`: The API version of the Tekton Pipeline resource.
+
+* `kind`: The type of the resource, which is `Pipeline` in this case.
+
+* `metadata`: The metadata for the pipeline, including the pipeline name.
+
+* `spec`: The specification for the pipeline, including the list of tasks.
+
+* `workspace` is a persistent storage location that can be shared between tasks in a pipeline. Workspaces are useful for storing data that needs to be accessed by multiple tasks, such as source code, build artifacts, or test results.
+
+* `tasks`: The list of tasks to be executed in the pipeline. Each task is defined by a `name` and a `taskRef`, which specifies the task to be executed.
+
+[OpenShift Developer Sandbox](https://developers.redhat.com/developer-sandbox) offers the opportunity to experiment it.
+
+In order to deploy this project using the **OpenShift Pipelines**, you can follow this simple steps:
+
+1. Create a workspace:
+
+   ```sh
+   oc apply -f k8s/01-workspace.yaml
+   ```
+
+2. Define the pipeline:
+
+   ```sh
+   oc apply -f k8s/02-pipeline.yaml
+   ```
+
+3. Run the pipeline:
+
+
+   **WARNING**: Before executing the following script, you MUST update the `IMAGE` param. Specifically, you have to **replace** the path segment `dmarrazz-dev` to match your actual project name.
+
+   ```sh
+   oc apply -f k8s/03-pipeline-run.yaml
+   ```
+
+In general, OpenShift Pipelines can be automatically triggered when the source repo is updated, but this feature is not already available in the sandbox.
+
+However, it's instuctive to explore the previous definition throught the OpenShift Console:
+
+- Open the pipeline in edit mode (_Pipeline Builder_):
+
+  ![builder](doc/images/pipeline-builder.png)
+
+- Explore the pipeline execution:
+
+  ![pipeline run](doc/images/pipeline-run-details.png)
+
 
 # Quarkus Basics
 
