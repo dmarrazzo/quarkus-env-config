@@ -10,7 +10,7 @@ import io.quarkus.test.junit.QuarkusTest;
 public class EnvResourceTest {
 
     @Test
-    public void testHelloEndpoint() {
+    public void testEnvEndpoint() {
         given()
           .when().get("/env")
           .then()
