@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1beta1
+kind: Trigger
+metadata:
+  name: github-trigger
+spec:
+  triggers:
+    - name: github-push-event
+      webhook:
+        kind: Webhook
+        name: github-webhook
