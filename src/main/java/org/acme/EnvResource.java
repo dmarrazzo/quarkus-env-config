@@ -27,6 +27,6 @@ public class EnvResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String getIp() {
-        return context.request().host();
+        return context.request().remoteAddress().hostAddress();
     }
 }
